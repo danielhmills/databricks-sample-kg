@@ -1,0 +1,15 @@
+[ODBC Data Sources]
+databricks_odbc = Databricks ODBC Driver
+
+[databricks_odbc]
+Driver          = {YOUR PATH TO}/libdatabricksodbc64.so
+Host            = {YOUR_HOST}
+Port            = 443
+HTTPPath        = {YOUR_HTTP_PATH}
+SSL             = 1
+AuthMech        = 3
+UID             = token
+PWD             = {YOUR_TOKEN_HERE}
+ThriftTransport = 2
+Schema          = bakehouse
+Catalog         = samples
