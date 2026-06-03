@@ -1,5 +1,5 @@
 [ODBC Drivers]
-Databricks ODBC Driver = Installed 
+databricks_odbc_driver = Installed 
 
-[Databricks ODBC Driver]
+[databricks_odbc_driver]
 Driver = {YOUR PATH TO}/libdatabricksodbc64.so
