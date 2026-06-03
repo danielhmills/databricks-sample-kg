@@ -1,0 +1,324 @@
+@prefix bakehouse: <http://www.databricks.com/bakehouse#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+bakehouse:
+    a owl:Ontology ;
+    rdfs:label "Databricks Bakehouse Ontology" ;
+    rdfs:comment "Ontology for the Bakehouse customer, franchise, supplier, review, and transaction data model." .
+
+#################################################################
+# Classes
+#################################################################
+
+bakehouse:Customer
+    a owl:Class ;
+    rdfs:label "Customer" ;
+    rdfs:comment "A customer of the Bakehouse business." .
+
+bakehouse:CustomerReview
+    a owl:Class ;
+    rdfs:label "Customer Review" ;
+    rdfs:comment "A review associated with a Bakehouse franchise." .
+
+bakehouse:Franchise
+    a owl:Class ;
+    rdfs:label "Franchise" ;
+    rdfs:comment "A Bakehouse franchise location." .
+
+bakehouse:Supplier
+    a owl:Class ;
+    rdfs:label "Supplier" ;
+    rdfs:comment "A supplier that provides ingredients to Bakehouse franchises." .
+
+bakehouse:Transaction
+    a owl:Class ;
+    rdfs:label "Transaction" ;
+    rdfs:comment "A sales transaction made by a customer at a franchise." .
+
+bakehouse:City
+    a owl:Class ;
+    rdfs:label "City" ;
+    rdfs:comment "A city referenced by customers, franchises, or suppliers." .
+
+bakehouse:State
+    a owl:Class ;
+    rdfs:label "State" ;
+    rdfs:comment "A state or administrative region." .
+
+bakehouse:Country
+    a owl:Class ;
+    rdfs:label "Country" ;
+    rdfs:comment "A country referenced by customers or franchises." .
+
+bakehouse:Continent
+    a owl:Class ;
+    rdfs:label "Continent" ;
+    rdfs:comment "A continent referenced by customers or suppliers." .
+
+bakehouse:Gender
+    a owl:Class ;
+    rdfs:label "Gender" ;
+    rdfs:comment "A gender value associated with a customer." .
+
+#################################################################
+# Object Properties
+#################################################################
+
+bakehouse:customerId
+    a owl:ObjectProperty ;
+    rdfs:label "customer ID IRI" ;
+    rdfs:comment "IRI identifying the customer." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range bakehouse:Customer .
+
+bakehouse:city
+    a owl:ObjectProperty ;
+    rdfs:label "city" ;
+    rdfs:comment "Relates a resource to a city." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range bakehouse:City .
+
+bakehouse:state
+    a owl:ObjectProperty ;
+    rdfs:label "state" ;
+    rdfs:comment "Relates a customer to a state or administrative region." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range bakehouse:State .
+
+bakehouse:country
+    a owl:ObjectProperty ;
+    rdfs:label "country" ;
+    rdfs:comment "Relates a resource to a country." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range bakehouse:Country .
+
+bakehouse:continent
+    a owl:ObjectProperty ;
+    rdfs:label "continent" ;
+    rdfs:comment "Relates a resource to a continent." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range bakehouse:Continent .
+
+bakehouse:gender
+    a owl:ObjectProperty ;
+    rdfs:label "gender" ;
+    rdfs:comment "Relates a customer to a gender value." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range bakehouse:Gender .
+
+bakehouse:customer
+    a owl:ObjectProperty ;
+    rdfs:label "customer" ;
+    rdfs:comment "Relates a transaction to the customer who made it." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range bakehouse:Customer .
+
+bakehouse:franchise
+    a owl:ObjectProperty ;
+    rdfs:label "franchise" ;
+    rdfs:comment "Relates a transaction or review to a franchise." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range bakehouse:Franchise .
+
+bakehouse:supplier
+    a owl:ObjectProperty ;
+    rdfs:label "supplier" ;
+    rdfs:comment "Relates a franchise to its supplier." ;
+    rdfs:domain bakehouse:Franchise ;
+    rdfs:range bakehouse:Supplier .
+
+#################################################################
+# Datatype Properties
+#################################################################
+
+bakehouse:firstName
+    a owl:DatatypeProperty ;
+    rdfs:label "first name" ;
+    rdfs:comment "Customer first name." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range xsd:string .
+
+bakehouse:lastName
+    a owl:DatatypeProperty ;
+    rdfs:label "last name" ;
+    rdfs:comment "Customer last name." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range xsd:string .
+
+bakehouse:emailAddress
+    a owl:DatatypeProperty ;
+    rdfs:label "email address" ;
+    rdfs:comment "Customer email address." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range xsd:string .
+
+bakehouse:phoneNumber
+    a owl:DatatypeProperty ;
+    rdfs:label "phone number" ;
+    rdfs:comment "Customer phone number." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range xsd:string .
+
+bakehouse:address
+    a owl:DatatypeProperty ;
+    rdfs:label "address" ;
+    rdfs:comment "Customer street address." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range xsd:string .
+
+bakehouse:postalZipCode
+    a owl:DatatypeProperty ;
+    rdfs:label "postal ZIP code" ;
+    rdfs:comment "Customer postal or ZIP code." ;
+    rdfs:domain bakehouse:Customer ;
+    rdfs:range xsd:string .
+
+bakehouse:reviewId
+    a owl:DatatypeProperty ;
+    rdfs:label "review ID" ;
+    rdfs:comment "Primary identifier for a customer review." ;
+    rdfs:domain bakehouse:CustomerReview ;
+    rdfs:range xsd:integer .
+
+bakehouse:review
+    a owl:DatatypeProperty ;
+    rdfs:label "review" ;
+    rdfs:comment "Text content of a customer review." ;
+    rdfs:domain bakehouse:CustomerReview ;
+    rdfs:range xsd:string .
+
+bakehouse:reviewDate
+    a owl:DatatypeProperty ;
+    rdfs:label "review date" ;
+    rdfs:comment "Date and time when the review was created." ;
+    rdfs:domain bakehouse:CustomerReview ;
+    rdfs:range xsd:dateTime .
+
+bakehouse:franchiseId
+    a owl:DatatypeProperty ;
+    rdfs:label "franchise ID" ;
+    rdfs:comment "Identifier for a franchise." ;
+    rdfs:domain bakehouse:Franchise ;
+    rdfs:range xsd:string .
+
+bakehouse:supplierId
+    a owl:DatatypeProperty ;
+    rdfs:label "supplier ID" ;
+    rdfs:comment "Identifier for a supplier." ;
+    rdfs:domain bakehouse:Supplier ;
+    rdfs:range xsd:string .
+
+bakehouse:name
+    a owl:DatatypeProperty ;
+    rdfs:label "name" ;
+    rdfs:comment "Name of a franchise or supplier." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string .
+
+bakehouse:district
+    a owl:DatatypeProperty ;
+    rdfs:label "district" ;
+    rdfs:comment "District where a franchise or supplier is located." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string .
+
+bakehouse:zipcode
+    a owl:DatatypeProperty ;
+    rdfs:label "ZIP code" ;
+    rdfs:comment "ZIP code of a franchise location." ;
+    rdfs:domain bakehouse:Franchise ;
+    rdfs:range xsd:string .
+
+bakehouse:size
+    a owl:DatatypeProperty ;
+    rdfs:label "size" ;
+    rdfs:comment "Size category of a franchise or supplier." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string .
+
+bakehouse:longitude
+    a owl:DatatypeProperty ;
+    rdfs:label "longitude" ;
+    rdfs:comment "Longitude coordinate." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:double .
+
+bakehouse:latitude
+    a owl:DatatypeProperty ;
+    rdfs:label "latitude" ;
+    rdfs:comment "Latitude coordinate." ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:double .
+
+bakehouse:ingredient
+    a owl:DatatypeProperty ;
+    rdfs:label "ingredient" ;
+    rdfs:comment "Ingredient supplied by a supplier." ;
+    rdfs:domain bakehouse:Supplier ;
+    rdfs:range xsd:string .
+
+bakehouse:approved
+    a owl:DatatypeProperty ;
+    rdfs:label "approved" ;
+    rdfs:comment "Approval status of a supplier." ;
+    rdfs:domain bakehouse:Supplier ;
+    rdfs:range xsd:string .
+
+bakehouse:transactionId
+    a owl:DatatypeProperty ;
+    rdfs:label "transaction ID" ;
+    rdfs:comment "Identifier for a sales transaction." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range xsd:string .
+
+bakehouse:txnDateTime
+    a owl:DatatypeProperty ;
+    rdfs:label "date time" ;
+    rdfs:comment "Date and time of a transaction." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range xsd:dateTime .
+
+bakehouse:product
+    a owl:DatatypeProperty ;
+    rdfs:label "product" ;
+    rdfs:comment "Product purchased in a transaction." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range xsd:string .
+
+bakehouse:quantity
+    a owl:DatatypeProperty ;
+    rdfs:label "quantity" ;
+    rdfs:comment "Quantity purchased in a transaction." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range xsd:string .
+
+bakehouse:unitPrice
+    a owl:DatatypeProperty ;
+    rdfs:label "unit price" ;
+    rdfs:comment "Unit price of the product in a transaction." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range xsd:string .
+
+bakehouse:totalPrice
+    a owl:DatatypeProperty ;
+    rdfs:label "total price" ;
+    rdfs:comment "Total price of the transaction." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range xsd:string .
+
+bakehouse:paymentMethod
+    a owl:DatatypeProperty ;
+    rdfs:label "payment method" ;
+    rdfs:comment "Payment method used for a transaction." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range xsd:string .
+
+bakehouse:cardNumber
+    a owl:DatatypeProperty ;
+    rdfs:label "card number" ;
+    rdfs:comment "Payment card number associated with a transaction." ;
+    rdfs:domain bakehouse:Transaction ;
+    rdfs:range xsd:string .

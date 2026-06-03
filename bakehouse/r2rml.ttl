@@ -1,0 +1,331 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix bakehouse: <http://www.databricks.com/bakehouse#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Bakehouse R2RML Mappings
+#################################################################
+
+<#TriplesMapsales_customers>
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery "SELECT * FROM databricks.bakehouse.sales_customers"
+    ] ;
+
+    rr:subjectMap [
+        rr:termType rr:IRI ;
+        rr:template "http://demo.openlinksw.com/databricks/bakehouse/customer-{customerID}#this" ;
+        rr:class bakehouse:Customer ;
+rr:graph <http://demo.openlinksw.com/databricks-bakehouse-r2rml#>
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:customerId ] ;
+        rr:objectMap [ rr:column "customerID" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:firstName ] ;
+        rr:objectMap [ rr:column "first_name" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:lastName ] ;
+        rr:objectMap [ rr:column "last_name" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant rdfs:label ] ;
+        rr:objectMap [
+            rr:termType rr:Literal ;
+            rr:template "{first_name} {last_name}"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:emailAddress ] ;
+        rr:objectMap [ rr:column "email_address" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:phoneNumber ] ;
+        rr:objectMap [ rr:column "phone_number" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:address ] ;
+        rr:objectMap [ rr:column "address" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:city ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks#city-{city}"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:state ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks#state-{state}"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:country ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks#country-{country}"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:postalZipCode ] ;
+        rr:objectMap [ rr:column "postal_zip_code" ]
+    ] .
+
+<#TriplesMapmedia_customer_reviews>
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery "SELECT * FROM databricks.bakehouse.media_customer_reviews"
+    ] ;
+
+    rr:subjectMap [
+        rr:termType rr:IRI ;
+        rr:template "http://demo.openlinksw.com/databricks/bakehouse/#review-{new_id}" ;
+        rr:class bakehouse:CustomerReview ;
+        rr:graph <http://demo.openlinksw.com/databricks-bakehouse-r2rml#>
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:reviewId ] ;
+        rr:objectMap [ rr:column "new_id" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:review ] ;
+        rr:objectMap [ rr:column "review" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:franchise ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks/bakehouse/franchise-{franchiseID}#this"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:reviewDate ] ;
+        rr:objectMap [ rr:column "review_date" ]
+    ] .
+
+<#TriplesMapsales_franchises>
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery "SELECT * FROM databricks.bakehouse.sales_franchises"
+    ] ;
+
+    rr:subjectMap [
+        rr:termType rr:IRI ;
+        rr:template "http://demo.openlinksw.com/databricks/bakehouse/franchise-{franchiseID}#this" ;
+        rr:class bakehouse:Franchise ;
+rr:graph <http://demo.openlinksw.com/databricks-bakehouse-r2rml#>
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:franchiseId ] ;
+        rr:objectMap [ rr:column "franchiseID" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:name ] ;
+        rr:objectMap [ rr:column "name" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant rdfs:label ] ;
+        rr:objectMap [
+            rr:termType rr:Literal ;
+            rr:column "name"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:city ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks#city-{city}"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:district ] ;
+        rr:objectMap [ rr:column "district" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:zipcode ] ;
+        rr:objectMap [ rr:column "zipcode" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:country ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks#country-{country}"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:latitude ] ;
+        rr:objectMap [ rr:column "latitude" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:longitude ] ;
+        rr:objectMap [ rr:column "longitude" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:supplier ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks/bakehouse/supplier-{supplierID}#this"
+        ]
+    ] .
+
+<#TriplesMapsales_suppliers>
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery "SELECT * FROM databricks.bakehouse.sales_suppliers"
+    ] ;
+
+    rr:subjectMap [
+        rr:termType rr:IRI ;
+        rr:template "http://demo.openlinksw.com/databricks/bakehouse/supplier-{supplierID}#this" ;
+        rr:class bakehouse:Supplier ;
+rr:graph <http://demo.openlinksw.com/databricks-bakehouse-r2rml#>
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:supplierId ] ;
+        rr:objectMap [ rr:column "supplierID" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:name ] ;
+        rr:objectMap [ rr:column "name" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant rdfs:label ] ;
+        rr:objectMap [
+            rr:termType rr:Literal ;
+            rr:column "name"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:ingredient ] ;
+        rr:objectMap [ rr:column "ingredient" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:city ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks#city-{city}"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:district ] ;
+        rr:objectMap [ rr:column "district" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:latitude ] ;
+        rr:objectMap [ rr:column "latitude" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:longitude ] ;
+        rr:objectMap [ rr:column "longitude" ]
+    ] .
+
+<#TriplesMapsales_transactions>
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery "SELECT * FROM databricks.bakehouse.sales_transactions"
+    ] ;
+
+    rr:subjectMap [
+        rr:termType rr:IRI ;
+        rr:template "http://demo.openlinksw.com/databricks/bakehouse/transaction-{transactionID}#this" ;
+        rr:class bakehouse:Transaction ;
+rr:graph <http://demo.openlinksw.com/databricks-bakehouse-r2rml#>
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:transactionId ] ;
+        rr:objectMap [ rr:column "transactionID" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant rdfs:label ] ;
+        rr:objectMap [
+            rr:termType rr:Literal ;
+            rr:column "transactionID"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:customer ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks/bakehouse/customer-{customerID}#this"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:franchise ] ;
+        rr:objectMap [
+            rr:termType rr:IRI ;
+            rr:template "http://demo.openlinksw.com/databricks/bakehouse/franchise-{franchiseID}#this"
+        ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:txnDateTime ] ;
+        rr:objectMap [ rr:column "dateTime" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:product ] ;
+        rr:objectMap [ rr:column "product" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:quantity ] ;
+        rr:objectMap [ rr:column "quantity" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:unitPrice ] ;
+        rr:objectMap [ rr:column "unitPrice" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:totalPrice ] ;
+        rr:objectMap [ rr:column "totalPrice" ]
+    ] ;
+
+    rr:predicateObjectMap [
+        rr:predicateMap [ rr:constant bakehouse:paymentMethod ] ;
+        rr:objectMap [ rr:column "paymentMethod" ]
+    ] .
