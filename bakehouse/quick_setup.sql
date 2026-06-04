@@ -47,6 +47,7 @@ vdd_disconnect_data_source('databricks_odbc');
 GRANT SELECT ON "databricks"."bakehouse"."sales_transactions" TO SPARQL_SELECT;
 
 SPARQL LOAD <https://raw.githubusercontent.com/danielhmills/databricks-sample-kg/refs/heads/main/bakehouse/r2rml.ttl> INTO <urn:databricks:bakehouse:r2rml>;
+SPARQL LOAD <https://raw.githubusercontent.com/danielhmills/databricks-sample-kg/refs/heads/main/bakehouse/ontology.ttl> INTO <http://www.databricks.com/bakehouse#>;
 
 EXEC ('SPARQL ' ||
  DB.DBA.R2RML_MAKE_QM_FROM_G(
