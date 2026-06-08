@@ -325,7 +325,7 @@ The interactive visualization allows you to:
 - Zoom and pan to examine graph structure
 - See property values on hover
 
-![SPARQLWorks Visualization](bakehouse/sparqlworks-visualization.png)
+![SPARQLWorks Visualization](https://github.com/danielhmills/databricks-sample-kg/blob/main/bakehouse/sparqlworks-visualization.png?raw=true)
 *Interactive graph visualization showing transaction-franchise-city relationships*
 
 ---
@@ -345,7 +345,7 @@ When you visit an entity URI, Virtuoso's rewrite rules implement **content negot
 - You see all the properties of the franchise: name, location, coordinates, supplier relationships, etc.
 - Links to related entities (suppliers, cities, countries) are clickable, letting you navigate the graph
 
-![Linked Data Hyperlink Navigation](bakehouse/linked-data-hyperlink.png)
+![Linked Data Hyperlink Navigation](https://github.com/danielhmills/databricks-sample-kg/blob/main/bakehouse/linked-data-hyperlink.png?raw=true)
 *Clicking on hyperlinked entities in the graph visualization navigates to their Linked Data descriptions*
 
 **For RDF clients (requesting RDF/XML, Turtle, JSON-LD):**
@@ -353,7 +353,7 @@ When you visit an entity URI, Virtuoso's rewrite rules implement **content negot
 - Returns machine-readable RDF data about the entity in the requested format
 - Perfect for automated agents, data integration, and semantic web applications
 
-![Linked Data Entity Description](bakehouse/linked-data-description.png)
+![Linked Data Entity Description](https://github.com/danielhmills/databricks-sample-kg/blob/main/bakehouse/linked-data-description.png?raw=true)
 *Human-readable entity description page showing all properties and relationships*
 
 This is the essence of **Linked Data**: every entity has a globally unique identifier (URI) that both humans and machines can dereference to discover what that entity is and how it relates to other entities. Your Databricks warehouse data becomes part of a navigable web of interconnected information, accessible through standard HTTP and queryable through standard SPARQL—without moving the data or changing your existing infrastructure.
