@@ -30,7 +30,7 @@ This approach is ideal when you need graph capabilities over analytical data tha
 
 Before you begin, make sure you have:
 
-- A running **Virtuoso Universal Server** (Enterprise Edition) with the **Virtual Database** (VDB) and **SPARQL** modules enabled.
+- A running **Virtuoso Universal Server** ([Commercial Edition](https://shop.openlinksw.com/c/2ELnq9iexd) - free 30-day trial available) with the **Virtual Database** (VDB) and **SPARQL** modules enabled.
 - The **Databricks ODBC Driver** installed on the same machine as Virtuoso.
 - A **Databricks account** and a running SQL warehouse or cluster.
 - Your Databricks **Host**, **HTTP Path**, and a **Personal Access Token**.
@@ -124,19 +124,88 @@ You now have two options:
 
 ### Option A: Quick Setup (Recommended)
 
-Run the `bakehouse/quick_setup.sql` script in Virtuoso's `isql`. This script will:
-
-1. Attach each table from Databricks into Virtuoso's local catalog.
-2. Disconnect and reconnect the data source after each attach.
-3. Grant `SPARQL_SELECT` privileges on each attached table.
-4. Load the R2RML mapping from the repository.
-5. Convert the R2RML mapping into Virtuoso's internal Quad Map (QM) representation, enabling SPARQL access.
+Run the `bakehouse/quick_setup.sql` script in Virtuoso's `isql`:
 
 ```bash
 isql 1111 dba dba < bakehouse/quick_setup.sql
 ```
 
 > Replace `1111`, `dba`, and `dba` with your Virtuoso port, username, and password if different.
+
+#### What the Script Does
+
+**1. Attach Remote Tables**
+
+The script attaches each Databricks table to Virtuoso's local catalog, making them queryable via SQL:
+
+```sql
+ATTACH TABLE "bakehouse"."sales_customers" 
+PRIMARY KEY(customerID)
+AS "databricks"."bakehouse"."sales_customers"
+FROM 'databricks_odbc';
+
+vdd_disconnect_data_source('databricks_odbc');
+```
+
+This creates a local reference to the remote table without copying data. The `vdd_disconnect_data_source` call releases the connection after each attach operation.
+
+**2. Grant SPARQL Access**
+
+Each attached table receives SPARQL query privileges:
+
+```sql
+GRANT SELECT ON "databricks"."bakehouse"."sales_customers" TO SPARQL_SELECT;
+```
+
+This allows the SPARQL engine to query the attached tables when generating RDF views.
+
+**3. Load R2RML Mappings and Ontology**
+
+The script loads the R2RML mapping definitions and ontology vocabulary into named graphs:
+
+```sql
+SPARQL LOAD <https://raw.githubusercontent.com/danielhmills/databricks-sample-kg/refs/heads/main/bakehouse/r2rml.ttl> 
+INTO <urn:databricks:bakehouse:r2rml>;
+
+SPARQL LOAD <https://raw.githubusercontent.com/danielhmills/databricks-sample-kg/refs/heads/main/bakehouse/ontology.ttl> 
+INTO <http://www.databricks.com/bakehouse#>;
+```
+
+The R2RML mapping defines how relational tables map to RDF triples (entities, properties, relationships).
+
+**4. Generate Quad Maps**
+
+The script converts R2RML mappings into Virtuoso's internal Quad Map format for efficient SPARQL query execution:
+
+```sql
+EXEC ('SPARQL ' ||
+ DB.DBA.R2RML_MAKE_QM_FROM_G('urn:databricks:bakehouse:r2rml')
+);
+```
+
+Quad Maps are Virtuoso's optimized representation of RDF views over relational data.
+
+**5. Configure Linked Data Rewrite Rules**
+
+The script sets up URL rewrite rules for content negotiation, enabling entity URIs to be dereferenceable:
+
+```sql
+DB.DBA.URLREWRITE_CREATE_REGEX_RULE (
+'databricks_bakehouse_rule1',
+1,
+'(/databricks/bakehouse/[^#]*)',
+vector('path'),
+1,
+'/describe/?url=http%%3A//^{URIQADefaultHost}^%U%%23this&graph=http%%3A//^{URIQADefaultHost}^/databricks-bakehouse-r2rml%%23&distinct=0',
+vector('path'),
+null,
+null,
+2,
+303
+);
+```
+
+These rules allow browsers to view entity descriptions and RDF clients to retrieve machine-readable data.
 
 ### Option B: Manual / Step-by-Step
 
@@ -213,6 +282,54 @@ LIMIT 10
 
 ---
 
+## Graph Visualization with SPARQLWorks
+
+The Knowledge Graph can be visualized interactively using **[SPARQLWorks](https://github.com/danielhmills/sparqlworks/)**, a graph visualization tool that renders SPARQL query results as interactive node-link diagrams.
+
+**Try it:** [View Transaction-Franchise Relationships](https://demo.openlinksw.com/sparqlworks/?urlfmt=default&q=PREFIX+%3A+%3Chttp%3A%2F%2Fwww.databricks.com%2Fbakehouse%23%3E%0A%0ACONSTRUCT%0A%7B%0A++%23Transaction+Table%0A++%3Ftransaction+a+%3ATransaction%3B%0A+++%3Afranchise+%3Ffranchise%3B%0A+++%3AtotalPrice+%3FtotalPrice.%0A%0A++%23Franchise+Table%0A++%3Ffranchise+%3Acity+%3FfranchiseCity.+++%0A%7D%0AWHERE%0A%7B%0A++GRAPH+%3Chttp%3A%2F%2Fdemo.openlinksw.com%2Fdatabricks-bakehouse-r2rml%23%3E%0A++%7B%0A++++%23Transaction+Table%0A++++%3Ftransaction+a+%3ATransaction%3B%0A+++++%3Afranchise+%3Ffranchise%3B%0A+++++%3AtotalPrice+%3FtotalPrice.%0A++%0A++++%23Franchise+Table%0A++++%3Ffranchise+%3Acity+%3FfranchiseCity.+++%0A++%7D%0A%7D%0ALIMIT+100&lang=en&labels=1&hideTypes=0&mode=advanced&custom=1&limit=5&service=https%3A%2F%2Fdemo.openlinksw.com%2Fsparql&chg=-600&ld=180&hover=1&annot=names&props=http%3A%2F%2Fwww.databricks.com%2Fbakehouse%23city%2Chttp%3A%2F%2Fwww.databricks.com%2Fbakehouse%23franchise%2Chttp%3A%2F%2Fwww.databricks.com%2Fbakehouse%23totalPrice&groups=external%2Cliteral)
+
+This visualization uses a SPARQL CONSTRUCT query to extract a subgraph showing relationships between transactions, franchises, and cities:
+
+```sparql
+PREFIX : <http://www.databricks.com/bakehouse#>
+
+CONSTRUCT
+{
+  #Transaction Table
+  ?transaction a :Transaction;
+   :franchise ?franchise;
+   :totalPrice ?totalPrice.
+
+  #Franchise Table
+  ?franchise :city ?franchiseCity.   
+}
+WHERE
+{
+  GRAPH <http://demo.openlinksw.com/databricks-bakehouse-r2rml#>
+  {
+    #Transaction Table
+    ?transaction a :Transaction;
+     :franchise ?franchise;
+     :totalPrice ?totalPrice.
+
+    #Franchise Table
+    ?franchise :city ?franchiseCity.   
+  }
+}
+LIMIT 100
+```
+
+The interactive visualization allows you to:
+- Explore entity relationships visually
+- Click nodes to navigate to entity descriptions
+- Zoom and pan to examine graph structure
+- See property values on hover
+
+![SPARQLWorks Visualization](bakehouse/sparqlworks-visualization.png)
+*Interactive graph visualization showing transaction-franchise-city relationships*
+
+---
+
 ## Linked Data: Navigable Entity URIs
 
 One of the key benefits of this approach is that every entity in your Knowledge Graph has a dereferenceable HTTP URI. This means you can navigate directly to any customer, franchise, supplier, or transaction by visiting its URL in a browser.
@@ -228,10 +345,16 @@ When you visit an entity URI, Virtuoso's rewrite rules implement **content negot
 - You see all the properties of the franchise: name, location, coordinates, supplier relationships, etc.
 - Links to related entities (suppliers, cities, countries) are clickable, letting you navigate the graph
 
+![Linked Data Hyperlink Navigation](bakehouse/linked-data-hyperlink.png)
+*Clicking on hyperlinked entities in the graph visualization navigates to their Linked Data descriptions*
+
 **For RDF clients (requesting RDF/XML, Turtle, JSON-LD):**
 - The server executes a SPARQL DESCRIBE query against the Knowledge Graph
 - Returns machine-readable RDF data about the entity in the requested format
 - Perfect for automated agents, data integration, and semantic web applications
+
+![Linked Data Entity Description](bakehouse/linked-data-description.png)
+*Human-readable entity description page showing all properties and relationships*
 
 This is the essence of **Linked Data**: every entity has a globally unique identifier (URI) that both humans and machines can dereference to discover what that entity is and how it relates to other entities. Your Databricks warehouse data becomes part of a navigable web of interconnected information, accessible through standard HTTP and queryable through standard SPARQL—without moving the data or changing your existing infrastructure.
 
