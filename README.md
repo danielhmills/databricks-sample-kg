@@ -245,6 +245,10 @@ WHERE
 LIMIT 10
 ```
 
+**Links:**
+- [Query Definition](http://demo.openlinksw.com/sparql?default-graph-uri=&qtxt=SELECT+*%0D%0AFROM+%3Chttp%3A%2F%2Fdemo.openlinksw.com%2Fdatabricks-bakehouse-r2rml%23%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fs+a+%3Fo%0D%0A%7D%0D%0ALIMIT+10&should-sponge=&format=text%2Fhtml&CXML_redir_for_subjs=121&CXML_redir_for_hrefs=&timeout=0)
+- [Query Results](http://demo.openlinksw.com/sparql?default-graph-uri=&query=SELECT+*%0D%0AFROM+%3Chttp%3A%2F%2Fdemo.openlinksw.com%2Fdatabricks-bakehouse-r2rml%23%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fs+a+%3Fo%0D%0A%7D%0D%0ALIMIT+10&should-sponge=&format=text%2Fhtml&timeout=0)
+
 If successful, you should see RDF triples representing entities from the Databricks `bakehouse` schema (customers, franchises, suppliers, transactions, and reviews).
 
 ---
