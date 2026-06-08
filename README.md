@@ -1,8 +1,28 @@
 # Databricks Sample Knowledge Graph
 
-This repository demonstrates how to connect a [Virtuoso Universal Server](https://virtuoso.openlinksw.com/) instance to a [Databricks](https://www.databricks.com/) warehouse via the **Databricks ODBC Driver**, attach the remote tables locally, and expose them as a SPARQL-queryable Knowledge Graph using [R2RML](https://www.w3.org/TR/r2rml/) mappings.
+Modern AI and analytics workloads increasingly demand graph reasoning capabilities—the ability to traverse relationships, discover patterns across connected data, and answer multi-hop questions that flat tables and vector searches cannot address efficiently. Yet most enterprise data remains locked in relational warehouses and lakehouses, where relationships are modeled using implicit coarse-grained foreign keys rather than fine-grained entity relationships defined by machine-computable relationship type semantics described in an ontology. In addition, these relationships and the entities they connect aren't named using hyperlinks which impedes intelligent navigation across instance boundaries, as and when required.
 
-The example dataset is the public **`samples.bakehouse`** schema from Databricks, which contains tables for a fictional bakery chain.
+This guide demonstrates how to unlock machine-computable entity relationships across your existing Databricks data without migration, duplication, or platform lock-in.
+
+Using open standards—including RDF for expressing entity relationships, SPARQL for graph-oriented query and reasoning, and R2RML for exposing relational data as graphs—you can transform existing warehouse tables into a navigable web of linked entities without moving the underlying data.
+
+At the heart of this approach are hyperlinks (IRIs), which provide globally unique identifiers for the entities, relationships, and data spaces represented in your data. These hyperlinks enable data from disparate systems to be connected, referenced, explored, and reasoned over as a coherent whole.
+
+The result is a Knowledge Graph that extends beyond the boundaries of any single database, platform, or application. Rather than creating another data silo, it establishes a loosely coupled semantic layer in which identities, relationships, and meanings become explicitly computable and interoperable across both enterprise and public data spaces.
+
+By virtualizing graph structures over existing data assets, organizations can create a foundation for AI agents, analytics, automation, and knowledge-driven applications that operate over a web of linked entities and relationships while preserving existing investments in data infrastructure.
+
+## What You Get
+
+- **Graph reasoning on data you already have:** Query relationships, traverse paths, and discover patterns across your Databricks tables using SPARQL, without moving data out of your governance perimeter.
+- **Standards-based interoperability:** RDF and SPARQL are W3C standards supported across hundreds of tools, triple stores, and semantic web platforms. Your graph isn't locked to a single vendor's query language or data model.
+- **Zero data movement:** Virtuoso's Virtual Database architecture attaches to Databricks via ODBC, leaving your source data in place while exposing it through a live, queryable RDF layer.
+- **Semantic enrichment:** R2RML mappings let you define rich ontologies, infer relationships that aren't explicit in your schema, and integrate external vocabularies for cross-domain reasoning.
+- **Production-grade infrastructure:** Virtuoso has powered enterprise Knowledge Graphs for decades, with proven scalability, ACID compliance, and full support for federated SPARQL queries across heterogeneous data sources.
+
+This approach is ideal when you need graph capabilities over analytical data that lives in a warehouse, when governance or scale requires data to stay where it is, or when you want to test the value of graph patterns before committing to a parallel graph stack. For workloads requiring millisecond-latency traversals or high-frequency writes, a native graph store remains the better fit—but for batch reasoning, GraphRAG over reference data, or exploratory graph analytics, this standards-based virtualization layer delivers graph power without the operational overhead.
+
+**Use case:** We'll use the public `samples.bakehouse` dataset from Databricks—a fictional bakery chain with customers, franchises, suppliers, transactions, and reviews—to demonstrate how relational tables become a navigable, SPARQL-queryable Knowledge Graph in minutes.
 
 ---
 
@@ -141,18 +161,79 @@ EXEC ('SPARQL ' || DB.DBA.R2RML_MAKE_QM_FROM_G('urn:databricks:bakehouse:r2rml')
 
 ---
 
-## Step 5: Query the Knowledge Graph
+## Step 5: Verify the Knowledge Graph
 
-Once the setup is complete, you can query the Databricks tables as RDF via SPARQL. For example:
+Confirm that the Knowledge Graph is accessible by running the following SPARQL query in Virtuoso's `isql` or the SPARQL endpoint:
 
 ```sparql
+SPARQL 
 SELECT *
-FROM <urn:databricks:bakehouse:r2rml>
-WHERE { ?s ?p ?o }
+FROM <http://demo.openlinksw.com/databricks-bakehouse-r2rml#>
+WHERE
+{
+  ?s a ?o
+}
 LIMIT 10
 ```
 
-Or use the Virtuoso Faceted Browser or SPARQL endpoint to explore the data.
+If successful, you should see RDF triples representing entities from the Databricks `bakehouse` schema (customers, franchises, suppliers, transactions, and reviews).
+
+---
+
+## Sample Query: Revenue by Franchise
+
+This query demonstrates how to join data across multiple tables (Transaction and Franchise) using SPARQL to calculate total revenue by franchise and city:
+
+```sparql
+PREFIX : <http://www.databricks.com/bakehouse#>
+
+SELECT
+?franchise
+?franchiseCity
+SUM(?totalPrice) as ?revenue
+
+FROM <http://demo.openlinksw.com/databricks-bakehouse-r2rml#>
+WHERE
+{
+  #Transaction Table
+  ?transaction a :Transaction;
+   :franchise ?franchise;
+   :totalPrice ?totalPrice.
+
+  #Franchise Table
+  ?franchise :city ?franchiseCity.   
+}
+GROUP BY ?franchise ?franchiseCity
+LIMIT 10
+```
+
+**Links:**
+- [Query Definition](http://demo.openlinksw.com/sparql?default-graph-uri=&qtxt=PREFIX%20%3A%20%3Chttp%3A%2F%2Fwww.databricks.com%2Fbakehouse%23%3E%0A%0ASELECT%0A%3Ffranchise%0A%3FfranchiseCity%0ASUM(%3FtotalPrice)%20as%20%3Frevenue%0A%0AFROM%20%3Chttp%3A%2F%2Fdemo.openlinksw.com%2Fdatabricks-bakehouse-r2rml%23%3E%0AWHERE%0A%7B%0A%20%20%23Transaction%20Table%0A%20%20%3Ftransaction%20a%20%3ATransaction%3B%0A%20%20%20%3Afranchise%20%3Ffranchise%3B%0A%20%20%20%3AtotalPrice%20%3FtotalPrice.%0A%0A%20%20%23Franchise%20Table%0A%20%20%3Ffranchise%20%3Acity%20%3FfranchiseCity.%20%20%20%0A%7D%0AGROUP%20BY%20%3Ffranchise%20%3FfranchiseCity%0ALIMIT%2010%0A&should-sponge=&format=text%2Fhtml&CXML_redir_for_subjs=121&CXML_redir_for_hrefs=&timeout=0)
+- [Query Results](http://demo.openlinksw.com/sparql?default-graph-uri=&query=PREFIX+%3A+%3Chttp%3A%2F%2Fwww.databricks.com%2Fbakehouse%23%3E%0D%0A%0D%0ASELECT%0D%0A%3Ffranchise%0D%0A%3FfranchiseCity%0D%0ASUM%28%3FtotalPrice%29+as+%3Frevenue%0D%0A%0D%0AFROM+%3Chttp%3A%2F%2Fdemo.openlinksw.com%2Fdatabricks-bakehouse-r2rml%23%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%23Transaction+Table%0D%0A++%3Ftransaction+a+%3ATransaction%3B%0D%0A+++%3Afranchise+%3Ffranchise%3B%0D%0A+++%3AtotalPrice+%3FtotalPrice.%0D%0A%0D%0A++%23Franchise+Table%0D%0A++%3Ffranchise+%3Acity+%3FfranchiseCity.+++%0D%0A%7D%0D%0AGROUP+BY+%3Ffranchise+%3FfranchiseCity%0D%0ALIMIT+10%0D%0A&should-sponge=&format=text%2Fhtml&timeout=0)
+
+---
+
+## Linked Data: Navigable Entity URIs
+
+One of the key benefits of this approach is that every entity in your Knowledge Graph has a dereferenceable HTTP URI. This means you can navigate directly to any customer, franchise, supplier, or transaction by visiting its URL in a browser.
+
+**Try it:** [http://demo.openlinksw.com/databricks/bakehouse/franchise-3000046#this](http://demo.openlinksw.com/databricks/bakehouse/franchise-3000046#this)
+
+### How It Works
+
+When you visit an entity URI, Virtuoso's rewrite rules implement **content negotiation**:
+
+**For browsers (requesting HTML):**
+- The server returns a 303 redirect to a human-readable description page
+- You see all the properties of the franchise: name, location, coordinates, supplier relationships, etc.
+- Links to related entities (suppliers, cities, countries) are clickable, letting you navigate the graph
+
+**For RDF clients (requesting RDF/XML, Turtle, JSON-LD):**
+- The server executes a SPARQL DESCRIBE query against the Knowledge Graph
+- Returns machine-readable RDF data about the entity in the requested format
+- Perfect for automated agents, data integration, and semantic web applications
+
+This is the essence of **Linked Data**: every entity has a globally unique identifier (URI) that both humans and machines can dereference to discover what that entity is and how it relates to other entities. Your Databricks warehouse data becomes part of a navigable web of interconnected information, accessible through standard HTTP and queryable through standard SPARQL—without moving the data or changing your existing infrastructure.
 
 ---
 
@@ -171,10 +252,10 @@ Or use the Virtuoso Faceted Browser or SPARQL endpoint to explore the data.
 
 ## Troubleshooting
 
-- **Connection refused / timeout:** Verify your Databricks host, HTTP path, and token. Ensure your SQL warehouse is running and accessible.
-- **Driver not found:** Double-check the `Driver` path in `odbc.ini` and `odbcinst.ini`.
-- **Table attach fails:** Make sure the data source is registered in Virtuoso (`vds_connect_data_source`) and the `Schema` and `Catalog` in `odbc.ini` match the Databricks target (`bakehouse` / `samples`).
-- **SPARQL returns no results:** Ensure the R2RML mapping was loaded correctly and `R2RML_MAKE_QM_FROM_G` executed without errors.
+- **DSN not found:** Verify ODBC configuration files are in the correct location and the DSN name matches exactly (`databricks_odbc`)
+- **Connection fails:** Check Databricks credentials, ensure the SQL warehouse is running, and verify network connectivity
+- **No SPARQL results:** Confirm the R2RML mapping loaded successfully and `R2RML_MAKE_QM_FROM_G` executed without errors
+- **Permission errors:** Ensure `SPARQL_SELECT` grants were applied to all attached tables
 
 ---
 
