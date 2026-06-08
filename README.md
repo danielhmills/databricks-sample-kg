@@ -280,6 +280,14 @@ LIMIT 10
 - [Query Definition](http://demo.openlinksw.com/sparql?default-graph-uri=&qtxt=PREFIX%20%3A%20%3Chttp%3A%2F%2Fwww.databricks.com%2Fbakehouse%23%3E%0A%0ASELECT%0A%3Ffranchise%0A%3FfranchiseCity%0ASUM(%3FtotalPrice)%20as%20%3Frevenue%0A%0AFROM%20%3Chttp%3A%2F%2Fdemo.openlinksw.com%2Fdatabricks-bakehouse-r2rml%23%3E%0AWHERE%0A%7B%0A%20%20%23Transaction%20Table%0A%20%20%3Ftransaction%20a%20%3ATransaction%3B%0A%20%20%20%3Afranchise%20%3Ffranchise%3B%0A%20%20%20%3AtotalPrice%20%3FtotalPrice.%0A%0A%20%20%23Franchise%20Table%0A%20%20%3Ffranchise%20%3Acity%20%3FfranchiseCity.%20%20%20%0A%7D%0AGROUP%20BY%20%3Ffranchise%20%3FfranchiseCity%0ALIMIT%2010%0A&should-sponge=&format=text%2Fhtml&CXML_redir_for_subjs=121&CXML_redir_for_hrefs=&timeout=0)
 - [Query Results](http://demo.openlinksw.com/sparql?default-graph-uri=&query=PREFIX+%3A+%3Chttp%3A%2F%2Fwww.databricks.com%2Fbakehouse%23%3E%0D%0A%0D%0ASELECT%0D%0A%3Ffranchise%0D%0A%3FfranchiseCity%0D%0ASUM%28%3FtotalPrice%29+as+%3Frevenue%0D%0A%0D%0AFROM+%3Chttp%3A%2F%2Fdemo.openlinksw.com%2Fdatabricks-bakehouse-r2rml%23%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%23Transaction+Table%0D%0A++%3Ftransaction+a+%3ATransaction%3B%0D%0A+++%3Afranchise+%3Ffranchise%3B%0D%0A+++%3AtotalPrice+%3FtotalPrice.%0D%0A%0D%0A++%23Franchise+Table%0D%0A++%3Ffranchise+%3Acity+%3FfranchiseCity.+++%0D%0A%7D%0D%0AGROUP+BY+%3Ffranchise+%3FfranchiseCity%0D%0ALIMIT+10%0D%0A&should-sponge=&format=text%2Fhtml&timeout=0)
 
+![SPARQL Query Results](https://github.com/danielhmills/databricks-sample-kg/blob/main/bakehouse/sparql-query-results.png?raw=true)
+*Query results showing revenue aggregated by franchise with clickable entity URIs*
+
+Each franchise URI in the results (e.g., [http://demo.openlinksw.com/databricks/bakehouse/franchise-3000046#this](http://demo.openlinksw.com/databricks/bakehouse/franchise-3000046#this)) is clickable and navigates to a detailed entity description page.
+
+![Entity Description from Query Results](https://github.com/danielhmills/databricks-sample-kg/blob/main/bakehouse/entity-description-from-query.png?raw=true)
+*Clicking a franchise URI from query results navigates to its full entity description*
+
 ---
 
 ## Graph Visualization with SPARQLWorks
@@ -327,6 +335,8 @@ The interactive visualization allows you to:
 
 ![SPARQLWorks Visualization](https://github.com/danielhmills/databricks-sample-kg/blob/main/bakehouse/sparqlworks-visualization.png?raw=true)
 *Interactive graph visualization showing transaction-franchise-city relationships*
+
+Clicking on any entity node in the visualization navigates to its description page. **Try it:** [Franchise 3000024 Description](http://demo.openlinksw.com/describe/?url=http%3A//demo.openlinksw.com%2Fdatabricks%2Fbakehouse%2Ffranchise-3000024%23this&graph=http%3A//demo.openlinksw.com/databricks-bakehouse-r2rml%23&distinct=0#this)
 
 ---
 
