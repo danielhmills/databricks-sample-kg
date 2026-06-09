@@ -230,7 +230,29 @@ EXEC ('SPARQL ' || DB.DBA.R2RML_MAKE_QM_FROM_G('urn:databricks:bakehouse:r2rml')
 
 ---
 
-## Step 5: Verify the Knowledge Graph
+## Step 5: Test the Attached Tables
+
+Before generating the Knowledge Graph, verify that the Databricks tables are properly attached and accessible via SQL. You can use Virtuoso's `isql` command-line tool or the Conductor web interface.
+
+**Using the Conductor UI:**
+Navigate to: `http://localhost:8890/conductor/isql_main.vspx`
+
+Or use your custom hostname/port:
+`http(s)://cname:port/conductor/isql_main.vspx`
+
+**Test Query:**
+```sql
+SELECT TOP 10 * FROM databricks.bakehouse.sales_customers;
+```
+
+![iSQL Query Results](https://github.com/danielhmills/databricks-sample-kg/blob/main/bakehouse/isql-table-query-result.png?raw=true)
+*Query results showing attached Databricks table data accessible via SQL*
+
+If successful, you should see rows from the `sales_customers` table, confirming that Virtuoso can access your Databricks data through the ODBC connection.
+
+---
+
+## Step 6: Verify the Knowledge Graph
 
 Confirm that the Knowledge Graph is accessible by running the following SPARQL query in Virtuoso's `isql` or the SPARQL endpoint:
 
